@@ -1,10 +1,17 @@
 import * as React from "react";
 import chunk from "lodash/chunk";
 import { usePopoverState, PopoverDisclosure } from "reakit";
-import { useGridState, Grid, GridRow, GridCell } from "../future";
+import {
+  useGridState,
+  Grid,
+  GridRow,
+  GridCell,
+  ComboboxGrid,
+  Combobox,
+} from "../future";
 import EmojiColorPopover from "./EmojiColorPopover";
 
-type Props = { virtual?: boolean };
+type Props = { combobox?: boolean };
 
 const emojis = [
   "😀",
@@ -29,20 +36,28 @@ const emojis = [
 
 const emojiGrid = chunk(emojis, 5);
 
-function EmojiGrid({ virtual }: Props) {
-  const grid = useGridState({ virtual, wrap: true });
+function EmojiGrid({ combobox }: Props) {
+  const grid = useGridState({
+    virtual: combobox,
+    currentId: combobox ? null : undefined,
+    wrap: true,
+  });
+  const GridComponent = combobox ? ComboboxGrid : Grid;
   return (
-    <Grid {...grid} aria-label="Emojis">
-      {emojiGrid.map((row, i) => (
-        <GridRow {...grid} key={i}>
-          {row.map((emoji) => (
-            <EmojiCell {...grid} key={emoji}>
-              {emoji}
-            </EmojiCell>
-          ))}
-        </GridRow>
-      ))}
-    </Grid>
+    <>
+      {combobox && <Combobox {...grid} />}
+      <GridComponent {...grid} aria-label="Emojis">
+        {emojiGrid.map((row, i) => (
+          <GridRow {...grid} key={i}>
+            {row.map((emoji) => (
+              <EmojiCell {...grid} key={emoji}>
+                {emoji}
+              </EmojiCell>
+            ))}
+          </GridRow>
+        ))}
+      </GridComponent>
+    </>
   );
 }
 

@@ -10,6 +10,7 @@ import {
   useDialogState,
 } from "reakit";
 import { useGridState, Grid, GridRow, GridCell } from "../future";
+import EmojiGrid from "./EmojiGrid";
 
 type Props = PopoverProps & PopoverArrowProps;
 
@@ -47,7 +48,7 @@ function EmojiColorPopover(props: Props) {
             </GridRow>
           </Grid>
           <Dialog {...dialog} aria-label="More tones">
-            dsdsa
+            {dialog.visible && <EmojiGrid combobox />}
           </Dialog>
         </>
       )}
