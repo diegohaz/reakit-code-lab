@@ -1,0 +1,127 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.components-modal__frame {
+  animation: none !important;
+}
+
+.menu {
+  display: flex;
+  padding: 8px;
+  border: 1px solid #1e1e1e;
+  background: white;
+  outline: none;
+}
+
+.menu[aria-orientation="vertical"] {
+  flex-direction: column;
+}
+
+.menu .menu-item {
+  background: transparent !important;
+  color: black !important;
+}
+
+.menu .menu-item[aria-haspopup="menu"]:after {
+  content: "";
+  margin-left: 16px;
+  margin-right: -4px;
+  width: 8px;
+  height: 8px;
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0My4zIDUwIj48cG9seWdvbiBwb2ludHM9IjQzLjMgMjUgMCAwIDAgNTAgNDMuMyAyNSIgLz48L3N2Zz4=');
+  background-repeat: no-repeat;
+}
+
+.menu .menu {
+  margin-top: -8px;
+}
+
+.tab:focus {
+  outline: none;
+}
+
+.tab:not([aria-selected="true"]):focus {
+  box-shadow: none !important;
+}
+
+.tab:focus:after {
+  position: absolute;
+  content: "";
+  box-shadow: 0 0 0 1.5px #007cba;
+  width: 100%;
+  height: 70%;
+  pointer-events: none;
+  left: 0;
+  top: 12.5%;
+  border-radius: 4px;
+}
+
+.tab svg {
+  width: 18px;
+  height: 18px;
+}
+
+.primary-tabs {
+  margin-bottom: 40px;
+}
+
+input[type="text"] {
+  display: block;
+  position: relative;
+  padding: 11px 16px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 transparent;
+  border: 1px solid #757575;
+  transition: box-shadow 0.1s linear;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+  box-shadow: rgb(0, 124, 186) 0px 0px 0px 0.5px;
+  border-color: rgb(0, 124, 186);
+  outline: transparent solid 2px;
+}
+
+.components-base-control {
+  margin-bottom: 20px;
+}
+
+.error-message {
+  font-size: 85%;
+  color: #d94f4f;
+  margin-top: 8px;
+}
+
+.components-button.components-button.components-button {
+  transition: none;
+}
+
+.popover.popover.popover {
+  border: 1px solid #1e1e1e;
+  padding: 6px;
+  border-radius: 4px;
+  background: white;
+  z-index: 100000 !important;
+}
+
+.popover .components-button {
+  padding: 8px;
+  height: 32px;
+}
+
+.popover .popover-arrow .stroke {
+  fill: #1e1e1e;
+}
+.popover .popover-arrow .fill {
+  fill: white;
+}

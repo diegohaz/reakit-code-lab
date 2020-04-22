@@ -1,8 +1,8 @@
 import * as React from "react";
 import {
   useTabState,
-  Tab as TabBase,
-  TabProps as TabPropsBase,
+  Tab,
+  TabProps,
   TabList,
   TabPanel,
   useTooltipState,
@@ -10,41 +10,55 @@ import {
   TooltipReference,
   VisuallyHidden,
   useDialogState,
-  Dialog,
-  Button,
 } from "reakit";
 import { FaAccessibleIcon } from "react-icons/fa";
 import { MdViewModule } from "react-icons/md";
 import PrimaryForm from "./PrimaryForm";
 import EmojiGrid from "./EmojiGrid";
+import cx from "../utils/cx";
+import AlertDialog from "./AlertDialog";
 
 function PrimaryTabs() {
   const tab = useTabState({ manual: true });
   return (
     <>
-      <TabList {...tab} aria-label="Primary tabs" style={{ marginBottom: 25 }}>
-        <Tab {...tab} title="Accessible">
+      <TabList
+        {...tab}
+        aria-label="Primary tabs"
+        className="primary-tabs components-tab-panel__tabs"
+      >
+        <TooltipAlertTab {...tab} title="Accessible">
           <FaAccessibleIcon />
-        </Tab>
-        <Tab {...tab} title="Composable">
+        </TooltipAlertTab>
+        <TooltipAlertTab {...tab} title="Composable">
           <MdViewModule />
-        </Tab>
+        </TooltipAlertTab>
       </TabList>
-      <TabPanel {...tab}>
-        <PrimaryForm />
+
+      <TabPanel {...tab} className="components-tab-panel__tab-content">
+        {({ tabIndex, ...panelProps }) => (
+          <div {...panelProps}>
+            <PrimaryForm />
+          </div>
+        )}
       </TabPanel>
-      <TabPanel {...tab}>
-        <EmojiGrid />
+
+      <TabPanel {...tab} className="components-tab-panel__tab-content">
+        {({ tabIndex, ...panelProps }) => (
+          <div {...panelProps}>
+            <EmojiGrid />
+          </div>
+        )}
       </TabPanel>
     </>
   );
 }
 
-type TabProps = TabPropsBase & { title: string };
+type Props = TabProps & { title: string };
 
-function Tab({ title, ...props }: TabProps) {
+function TooltipAlertTab({ title, ...props }: Props) {
   const dialog = useDialogState();
-  const tooltip = useTooltipState({ placement: "bottom" });
+  const tooltip = useTooltipState({ gutter: 4, placement: "bottom" });
   const onTabClick = () => {
     // Show dialog only when changing tabs
     if (props.selectedId !== props.currentId) {
@@ -52,37 +66,46 @@ function Tab({ title, ...props }: TabProps) {
     }
   };
   const onAlertDialogConfirm = () => {
-    dialog.hide();
     if (props.currentId) {
       props.select(props.currentId);
     }
   };
   return (
     <>
-      <TabBase {...props}>
+      <Tab {...props}>
         {(tabProps) => (
           <TooltipReference
             {...tooltip}
             {...tabProps}
             as="button"
             onClick={onTabClick}
+            className={cx(
+              props.className,
+              "tab",
+              "components-tab-panel__tabs-item",
+              props.selectedId === tabProps.id && "is-active"
+            )}
           >
             {props.children}
             <VisuallyHidden>{title}</VisuallyHidden>
           </TooltipReference>
         )}
-      </TabBase>
-      <Tooltip {...tooltip}>{title}</Tooltip>
-      <Dialog
-        {...dialog}
-        role="alertdialog"
-        aria-label="Confirm"
-        style={{ width: 280 }}
+      </Tab>
+
+      <Tooltip
+        {...tooltip}
+        className="components-popover components-tooltip is-expanded is-without-arrow"
       >
-        <p>Are you sure?</p>
-        <Button onClick={dialog.hide}>Cancel</Button>
-        <Button onClick={onAlertDialogConfirm}>Confirm</Button>
-      </Dialog>
+        <div className="components-popover__content">{title}</div>
+      </Tooltip>
+
+      <AlertDialog
+        {...dialog}
+        aria-label="Confirm tab change"
+        onConfirm={onAlertDialogConfirm}
+      >
+        Are you sure you want to leave this panel?
+      </AlertDialog>
     </>
   );
 }

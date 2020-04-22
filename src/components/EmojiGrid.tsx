@@ -10,31 +10,13 @@ import {
   Combobox,
 } from "../future";
 import EmojiColorPopover from "./EmojiColorPopover";
+import data from "../data/emoji.json";
+import cx from "../utils/cx";
+import { Skin, Emoji } from "../utils/types";
+
+const emojiGrid = chunk(data, 7) as Emoji[][];
 
 type Props = { combobox?: boolean };
-
-const emojis = [
-  "😀",
-  "😁",
-  "😂",
-  "😃",
-  "😄",
-  "😅",
-  "😆",
-  "😇",
-  "😈",
-  "😉",
-  "😊",
-  "😋",
-  "😌",
-  "😍",
-  "😎",
-  "😏",
-  "😐",
-  "😑",
-];
-
-const emojiGrid = chunk(emojis, 5);
 
 function EmojiGrid({ combobox }: Props) {
   const grid = useGridState({
@@ -45,42 +27,78 @@ function EmojiGrid({ combobox }: Props) {
   const GridComponent = combobox ? ComboboxGrid : Grid;
   return (
     <>
-      {combobox && <Combobox {...grid} />}
+      {combobox && (
+        <Combobox
+          {...grid}
+          type="text"
+          className="components-text-control__input"
+        />
+      )}
       <GridComponent {...grid} aria-label="Emojis">
-        {emojiGrid.map((row, i) => (
-          <GridRow {...grid} key={i}>
-            {row.map((emoji) => (
-              <EmojiCell {...grid} key={emoji}>
-                {emoji}
-              </EmojiCell>
-            ))}
-          </GridRow>
+        {emojiGrid.map((emojis, i) => (
+          <EmojiRow {...grid} emojis={emojis} key={i} id={`row-${i}`} />
         ))}
       </GridComponent>
     </>
   );
 }
 
-type EmojiCellProps = React.ComponentProps<typeof GridCell>;
+type EmojiRowProps = EmojiCellProps &
+  React.ComponentProps<typeof GridRow> & { emojis: Emoji[] };
 
-const EmojiCell = React.forwardRef<HTMLButtonElement, EmojiCellProps>(
-  (props, ref) => {
-    const popover = usePopoverState({ placement: "top", modal: true });
-    return (
-      <>
-        <GridCell {...props} ref={ref}>
-          {({ role, ...cellProps }) => (
-            <span role={role}>
-              <PopoverDisclosure {...popover} {...cellProps}>
-                {props.children}
-              </PopoverDisclosure>
-            </span>
-          )}
-        </GridCell>
-        <EmojiColorPopover {...popover} />
-      </>
-    );
-  }
+const EmojiRow = React.memo(
+  React.forwardRef<HTMLButtonElement, EmojiRowProps>(
+    ({ emojis, ...props }, ref) => (
+      <GridRow {...props} ref={ref}>
+        {emojis.map((emoji) => (
+          <EmojiCell
+            {...props}
+            key={emoji.hexcode}
+            id={`emoji-${emoji.hexcode}`}
+            skins={emoji.skins}
+          >
+            {emoji.emoji}
+          </EmojiCell>
+        ))}
+      </GridRow>
+    )
+  ),
+  GridRow.unstable_propsAreEqual
+);
+
+type EmojiCellProps = React.ComponentProps<typeof GridCell> & {
+  skins?: Skin[];
+};
+
+const EmojiCell = React.memo(
+  React.forwardRef<HTMLButtonElement, EmojiCellProps>(
+    ({ skins, ...props }, ref) => {
+      const popover = usePopoverState({ placement: "top", modal: true });
+      return (
+        <>
+          <GridCell {...props} ref={ref}>
+            {({ role, ...cellProps }) => (
+              <span role={role}>
+                <PopoverDisclosure
+                  {...popover}
+                  {...cellProps}
+                  className={cx(
+                    cellProps.className,
+                    "components-button",
+                    cellProps["aria-selected"] && "is-primary"
+                  )}
+                >
+                  {props.children}
+                </PopoverDisclosure>
+              </span>
+            )}
+          </GridCell>
+          {skins && <EmojiColorPopover skins={skins} {...popover} />}
+        </>
+      );
+    }
+  ),
+  GridCell.unstable_propsAreEqual
 );
 
 export default EmojiGrid;

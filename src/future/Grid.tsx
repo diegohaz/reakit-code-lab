@@ -60,15 +60,22 @@ const useGridCell = createHook<
   compose: useCompositeItem,
   useState: useGridState,
   useProps(options, { onClick: htmlOnClick, ...htmlProps }) {
-    const onClick = (event: React.MouseEvent) => {
-      htmlOnClick?.(event);
-      if (event.defaultPrevented) return;
-      if (options.id) {
-        options.move?.(options.id);
-      }
-    };
+    const onClick = React.useCallback(
+      (event: React.MouseEvent) => {
+        htmlOnClick?.(event);
+        if (event.defaultPrevented) return;
+        if (options.id) {
+          options.move?.(options.id);
+        }
+      },
+      [htmlOnClick, options.id, options.move]
+    );
     return { role: "gridcell", onClick, ...htmlProps };
   },
 });
 
-export const GridCell = createComponent({ as: "span", useHook: useGridCell });
+export const GridCell = createComponent({
+  as: "span",
+  memo: true,
+  useHook: useGridCell,
+});

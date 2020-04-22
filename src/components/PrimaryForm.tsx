@@ -9,6 +9,7 @@ import {
   unstable_FormRemoveButton as FormRemoveButton,
   unstable_FormPushButton as FormPushButton,
 } from "reakit";
+import cx from "../utils/cx";
 
 type Props = React.FormHTMLAttributes<HTMLFormElement>;
 
@@ -39,28 +40,73 @@ const PrimaryForm = React.forwardRef<HTMLFormElement, Props>((props, ref) => {
 
   return (
     <Form {...form} {...props} ref={ref}>
-      <FormLabel {...form} name="name">
-        Name
-      </FormLabel>
-      <FormInput {...form} name="name" placeholder="John Doe" />
-      <FormMessage {...form} name="name" />
-      {form.values.friends.map((_, i) => (
-        <React.Fragment key={i}>
-          <FormLabel {...form} name={["friends", i, "name"]}>
-            Friend name
+      <div className="components-base-control">
+        <div className="components-base-control__field">
+          <FormLabel
+            {...form}
+            name="name"
+            className="components-base-control__label"
+          >
+            Name
           </FormLabel>
-          <FormInput {...form} name={["friends", i, "name"]} />
-          <FormMessage {...form} name={["friends", i, "name"]} />
-          <FormRemoveButton {...form} name="friends" index={i}>
+          <FormInput
+            {...form}
+            type="text"
+            name="name"
+            placeholder="Jane Doe"
+            className="components-text-control__input"
+          />
+          <FormMessage {...form} name="name" className="error-message" />
+        </div>
+      </div>
+      {form.values.friends.map((_, i) => (
+        <div className="components-base-control" key={i}>
+          <div className="components-base-control__field">
+            <FormLabel
+              {...form}
+              name={["friends", i, "name"]}
+              className="components-base-control__label"
+            >
+              Friend name
+            </FormLabel>
+            <FormInput
+              {...form}
+              type="text"
+              name={["friends", i, "name"]}
+              placeholder="John Doe"
+              className="components-text-control__input"
+            />
+            <FormMessage
+              {...form}
+              name={["friends", i, "name"]}
+              className="error-message"
+            />
+          </div>
+          <FormRemoveButton
+            {...form}
+            name="friends"
+            index={i}
+            className="components-button is-secondary is-small"
+          >
             Remove friend
           </FormRemoveButton>
-        </React.Fragment>
+        </div>
       ))}
-      <FormPushButton {...form} name="friends" value={{ name: "" }}>
-        Add friend
-      </FormPushButton>
       <br />
-      <FormSubmitButton {...form}>Submit</FormSubmitButton>
+      <FormPushButton
+        {...form}
+        name="friends"
+        value={{ name: "" }}
+        className="components-button is-secondary"
+      >
+        Add friend
+      </FormPushButton>{" "}
+      <FormSubmitButton
+        {...form}
+        className={cx("components-button is-primary")}
+      >
+        Submit
+      </FormSubmitButton>
     </Form>
   );
 });
